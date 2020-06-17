@@ -86,7 +86,7 @@ SELECT employees.id, employees.first_name, employees.last_name, employees.manage
 FROM employees
 LEFT JOIN role ON employees.role_id = role.id
 INNER JOIN department ON role.department_id = department_id 
-INNER JOIN employees m ON employees.manager_id = m.id WHERE CONCAT(m.first_name, " ", m.last_name) IN ('Bob Collen')
+INNER JOIN employees m ON employees.manager_id = m.id WHERE CONCAT(m.first_name, " ", m.last_name) IN ('Harry Potter')
 GROUP BY employees.id;
 
 --BY DEPARTMENT--

@@ -1,6 +1,7 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
 const cTable = require('console.table');
+const colors = require('colors');
 
 // create the connection information for the sql database
 var connection = mysql.createConnection({
@@ -17,7 +18,7 @@ var connection = mysql.createConnection({
   database: "employee_DB"
 });
 
-connection.connect(function(err) {
+connection.connect((err) => {
   if (err) throw err;
   console.log("connected as id " + connection.threadId + "\n");
   start(); 
@@ -45,7 +46,7 @@ function start() {
             "EXIT"
         ]
     }).then(function (answer) {
-        switch(answer.action) {
+        switch(answer.start) {
             case "View All Employees":
                 viewAllEmployees();
                 break;
