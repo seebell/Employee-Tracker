@@ -242,3 +242,39 @@ function addRole() {
         });
     });
 }
+
+function addNewEmployee() {
+    connection.query(`SELECT CONCAT(first_name, " ", last_name) AS Manager, id FROM employees`, function (err, res) {
+        connection.query(`SELECT DISTINCT title, id from role`, function (err, data) {
+            inquirer.prompt([{
+                message: "What is the employee's first name?",
+                type: "input",
+                name: "first_name"
+            }, {
+                message: "What is the employee's last name?",
+                type: "input",
+                name: "last_name"
+            }, {
+                message: "What is the employee's role?",
+                type: "list",
+                name: 'role_id',
+                choices: data.map(o => ({ name: o.title, value: o.id }))
+
+            }, {
+                message: "Who will be this employee's Manager?",
+                type: "list",
+                name: 'manager_id',
+                choices: res.map(o => ({ name: o.Manager, value: o.id }))
+
+            }]).then(answer => {
+                connection.query(`INSERT INTO employees(first_name, last_name, role_id, manager_id) VALUES ('${answer.first_name}', '${answer.last_name}', ${answer.role_id}, ${answer.manager_id})`, function (err, res) {
+                    if (err) throw err;
+                    console.log("------------")
+                    console.log(`Employee ${answer.first_name} ${answer.last_name} has been successfully added`.yellow);
+                    console.log("------------")
+                    start();
+                });
+            });
+        });
+    });
+};
