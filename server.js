@@ -202,3 +202,17 @@ function allRoles() {
         start();
     });
 }
+
+function addDepartment() {
+    inquirer.prompt([{
+        message: "What department would you like to add?",
+        type: "input",
+        name: "newDepartment"
+    }]).then(answer => {
+        connection.query(`INSERT INTO department (name) VALUES ("${answer.newDepartment}")`, function (err, res) {
+            if (err) throw err;
+            console.log(`Department ${answer.newDepartment} has been successfully added`.yellow);
+            start();
+        });
+    })
+}
