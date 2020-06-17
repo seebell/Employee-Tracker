@@ -32,6 +32,7 @@ function start() {
         choices: [
             "View All Employees",
             "View All Employees by Department",
+            "View All Employees by Manager",
             "View All Departments",
             "View All Roles",
             "Add Department",
@@ -155,3 +156,26 @@ function employeeByDepartment() {
         });
     })
 };
+
+function employeeByManager() {
+    connection.query(`SELECT CONCAT(m.first_name, " ", m.last_name) AS Manager, m.id FROM employees INNER JOIN employees m ON employees.manager_id = m.id`, function (err, res) {
+       inquirer.prompt({
+           name: "manager_id",
+           type: "list",
+           message: "By which Manager would you like to view the employees?",
+           choices: res.map(o => ({ name: o.Manager, value: o.id }))
+
+       }).then(function (answer) {
+           var query = `SELECT employees.id, CONCAT(first_name, " ", last_name) AS Name, role.title
+           FROM employees INNER JOIN role ON employees.role_id = role.id
+           WHERE employees.manager_id = ${answer.manager_id} GROUP BY employees.id`;
+           connection.query(query,
+            function (err, result) {
+                if (err) throw err;
+                console.log("Employees by Manager".green)
+                console.table(result);
+                start();
+            });
+       })
+    });
+}
