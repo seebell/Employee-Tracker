@@ -129,3 +129,29 @@ const viewAllEmployees = () => {
         start();
     });
 };
+
+function employeeByDepartment() {
+    inquirer.prompt({
+        name: "department",
+        type: "list",
+        message: "By which department would you like to view the employees?",
+        choices: [
+            "Sales", 
+            "Engineering",
+            "Finance",
+            "Marketing"
+        ]
+    }).then(function (answer) {
+        var query = `SELECT employees.id, CONCAT(employees.first_name, " ", employees.last_name) AS Fullname, department.name AS department
+        FROM employees
+        LEFT JOIN role on employees.role_id = role.id
+        LEFT JOIN department on role.department_id = department.id
+        WHERE department.name ="${answer.department}"`;
+        connection.query(query, function (err, res) {
+            if(err) throw err;
+            console.log("All Employees by Department".green)
+            console.table(res);
+            start();
+        });
+    })
+};
