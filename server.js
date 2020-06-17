@@ -20,5 +20,111 @@ var connection = mysql.createConnection({
 connection.connect(function(err) {
   if (err) throw err;
   console.log("connected as id " + connection.threadId + "\n");
-  start();
+  start(); 
 });
+
+function start() {
+    inquirer.prompt({
+        name: "start",
+        type:"rawlist",
+        message: "What would you like to do?",
+        choices: [
+            "View All Employees",
+            "View All Employees by Department",
+            "View All Departments",
+            "View All Roles",
+            "Add Department",
+            "Add Role",
+            "Add Employee",
+            "Remove Department",
+            "Remove Role",
+            "Remove Employee",
+            "Update Employee Role",
+            "Update Employee Manager",
+            "View the total utilized budget of a department",
+            "EXIT"
+        ]
+    }).then(function (answer) {
+        switch(answer.action) {
+            case "View All Employees":
+                viewAllEmployees();
+                break;
+
+            case "View All Employees by Department":
+                employeeByDepartment();
+                break;
+
+            case "View All Employees by Manager":
+                employeeByManager();
+                break;
+
+            case "View All Departments":
+                allDepartment();
+                break;
+
+            case "View All Roles":
+                allRoles();
+                break;
+
+            case "Add Department":
+                addDepartment();
+                break;
+
+            case "Add Role":
+                addRole();
+                break;
+
+            case "Add Employee":
+                addNewEmployee();
+                break;
+
+            case "Remove Department":
+                removeDepartment();
+                break;
+
+            case "Remove Role":
+                removeRole();
+                break;
+            
+            case "Remove Employee":
+                removeEmployee();
+                break;
+
+            case "Update Employee Role":
+                updateRole();
+                break;
+
+            case "Update Employee Manager":
+                updateManager();
+                break;
+
+            case "View the total utilized budget of a department":
+                budgetOfDepartment();
+                break;
+
+            case "EXIT":
+                console.table("Thanks for using the Employee Tracker!")
+                connection.end();
+                break;
+
+            default:
+                return "There is no way out!"
+            
+
+            
+        }
+    });
+}
+
+const viewAllEmployees = () => {
+    var query = "SELECT employees.id, employees.first_name, employees.last_name, role.title, department.name AS department, role.salary, CONCAT(manager.first_name, ' ', manager.last_name) AS manager FROM employees";
+    query += " LEFT JOIN role on employees.role_id = role.id";
+    query += " LEFT JOIN department on role.department_id = department.id";
+    query += " LEFT JOIN employees manager on manager.id = employees.manager_id";
+    connection.query(query, function (err, res) {
+        if (err) throw err;
+        console.log("ALL Employees View".green)
+        console.table(res);
+        start();
+    });
+};
