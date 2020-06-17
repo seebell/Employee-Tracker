@@ -179,3 +179,26 @@ function employeeByManager() {
        })
     });
 }
+
+function allDepartment() {
+    var query = "SELECT * FROM department";
+    connection.query(query, function(err, res) {
+        if (err) throw err;
+        console.log("All departments".magenta)
+        console.table(res);
+        start();
+    });
+}
+
+function allRoles() {
+    var query = `SELECT role.id,role.title, role.salary, department.name AS Department
+    FROM role
+    LEFT JOIN department ON department.id =role.department_id
+    ORDER BY role.id `;
+    connection.query(query, function (err, res) {
+        if (err) throw err;
+        console.log("All Roles".magenta)
+        console.table(res);
+        start();
+    });
+}
