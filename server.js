@@ -357,3 +357,29 @@ function removeEmployee() {
         })
     });
 };
+
+function updateRole() {
+    connection.query(`SELECT CONCAT(first_name, " ", last_name) AS Employee, id FROM employees`, function (err, res) {
+        connection.query(`SELECT title, id from role`, function (err, data) {
+            inquirer.prompt([{
+                message: "What is the name of the employee that you would like to update a role?",
+                type: "list",
+                name: "updatedEmployee",
+                choices: res.map(o => ({ name: o.Employee, value: o.id }))
+            }, {
+                message: "What is the employee's new role?",
+                type: "list",
+                name: 'role_id',
+                choices: data.map(o => ({ name: o.title, value: o.id }))
+
+            }]).then(answer => {
+                connection.query(`UPDATE employees SET role_id = "${answer.role_id}" WHERE id= "${answer.updatedEmployee}"`, function (err, res) {
+                    if (err) throw err;
+                    console.log("Employee's role has been successfully updated".green)
+
+                    start();
+                });
+            });
+        });
+    });
+}
