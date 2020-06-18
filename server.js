@@ -383,3 +383,29 @@ function updateRole() {
         });
     });
 }
+
+function updateManager() {
+    connection.query(`SELECT CONCAT(first_name, " ", last_name) AS Employee, id FROM employees`, function (err, res) {
+        connection.query(`SELECT CONCAT(first_name, " ", last_name) AS Manager, id FROM employees`, function (err, data) {
+            inquirer.prompt([{
+                message: "What is the name of the employee that you would like to update the Manager?",
+                type: "list",
+                name: "employeeID",
+                choices: res.map(o => ({ name: o.Employee, value: o.id }))
+
+            }, {
+                message: "Who is the employee's new Manager?",
+                type: "list",
+                name:'managerID',
+                choices: data.map(o => ({ name: o.Manager, value: o.id }))
+
+            }]).then(answer => {
+                connection.query(`UPDATE employees SET manager_id ="${answer.managerID}" WHERE id="${answer.employeeID}"`, function (err, res) {
+                    if (err) throw err;
+                    console.log("Employee's manager has been successfully updated".green)
+                    start();
+                });
+            });
+        });
+    });
+}
