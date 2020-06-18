@@ -327,3 +327,33 @@ function removeRole() {
         });
     });
 }
+
+function removeEmployee() {
+    var query = "SELECT CONCAT(first_name, ' ', last_name) AS fullName, id FROM employees";
+    connection.query(query, async function (err, res) {
+
+        const employeeChoices = res.map(item => {
+            return {
+                name: item.fullName,
+                value: item.id
+            }
+        });
+
+        inquirer.prompt([{
+
+            type: "list",
+            name: "employeeId",
+            message: "Which employee do you want to remove?",
+            choices: employeeChoices
+        }]).then(function (answer) {
+
+            const thisUser = employeeChoices.filter(item => item.value === answer.employeeId);
+            var query = `DELETE FROM employees WHERE id = "${answer.employeeId}"`;
+            connection.query(query, function (err, res) {
+                if (err) throw err;
+                console.log(`Employee ${thisUser[0].name} has been successfully removed`.red);
+                start();
+            });
+        })
+    });
+};
