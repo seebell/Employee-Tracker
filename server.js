@@ -3,17 +3,13 @@ var inquirer = require("inquirer");
 const cTable = require('console.table');
 const colors = require('colors');
 
-// create the connection information for the sql database
 var connection = mysql.createConnection({
   host: "localhost",
 
-  // Your port; if not 3306
   port: 3306,
 
-  // Your username
   user: "root",
 
-  // Your password
   password: "Joker&voldy2019",
   database: "employee_DB"
 });
@@ -407,5 +403,18 @@ function updateManager() {
                 });
             });
         });
+    });
+}
+
+function budgetOfDepartment() {
+    var query = "SELECT department.id, department.name, SUM(role.salary) AS utilized_budget FROM employees";
+    query += " LEFT JOIN role on employees.role_id = role.id";
+    query += " LEFT JOIN department on role.department_id = department.id";
+    query += " GROUP BY department.id, department.name";
+    connection.query(query, function (err, res) {
+        if (err) throw err;
+        console.log(`View budget of a department`.yellow);
+        console.table(res);
+        start();
     });
 }
